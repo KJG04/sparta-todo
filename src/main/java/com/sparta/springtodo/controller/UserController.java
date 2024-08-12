@@ -3,6 +3,7 @@ package com.sparta.springtodo.controller;
 import com.sparta.springtodo.dto.UserRequestDto;
 import com.sparta.springtodo.dto.UserResponseDto;
 import com.sparta.springtodo.entity.User;
+import com.sparta.springtodo.mapper.UserMapper;
 import com.sparta.springtodo.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,26 +22,14 @@ public class UserController {
     @PostMapping("")
     public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto userRequestDto) {
         User user = userService.createUser(userRequestDto.getName(), userRequestDto.getEmail());
-        UserResponseDto userResponseDto = UserResponseDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .createAt(user.getCreateAt())
-                .updateAt(user.getUpdateAt())
-                .build();
+        UserResponseDto userResponseDto = UserMapper.INSTANCE.toUserResponseDto(user);
         return ResponseEntity.ok(userResponseDto);
     }
 
     @GetMapping("")
     public ResponseEntity<List<UserResponseDto>> get() {
         List<User> users = userService.getUsers();
-        List<UserResponseDto> userResponseDtos = users.stream().map(v -> UserResponseDto.builder()
-                .id(v.getId())
-                .name(v.getName())
-                .email(v.getEmail())
-                .createAt(v.getCreateAt())
-                .updateAt(v.getUpdateAt())
-                .build()).toList();
-        return ResponseEntity.ok(userResponseDtos);
+        List<UserResponseDto> userResponseDtoList = users.stream().map(UserMapper.INSTANCE::toUserResponseDto).toList();
+        return ResponseEntity.ok(userResponseDtoList);
     }
 }
