@@ -21,7 +21,7 @@ public class User {
     @Column
     String name;
 
-    @Column
+    @Column(unique = true)
     String email;
 
     @Column
@@ -29,6 +29,12 @@ public class User {
 
     @Column
     LocalDateTime updateAt;
+
+    @Builder
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -39,11 +45,5 @@ public class User {
     @PreUpdate
     public void preUpdate() {
         this.updateAt = LocalDateTime.now();
-    }
-
-    @Builder
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
     }
 }

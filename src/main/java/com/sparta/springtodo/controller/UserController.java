@@ -1,6 +1,6 @@
 package com.sparta.springtodo.controller;
 
-import com.sparta.springtodo.dto.UserRequestDto;
+import com.sparta.springtodo.dto.CreateUserRequestDto;
 import com.sparta.springtodo.dto.UserResponseDto;
 import com.sparta.springtodo.entity.User;
 import com.sparta.springtodo.mapper.UserMapper;
@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> create(@RequestBody CreateUserRequestDto userRequestDto) {
         User user = userService.createUser(userRequestDto.getName(), userRequestDto.getEmail());
         UserResponseDto userResponseDto = UserMapper.INSTANCE.toUserResponseDto(user);
         return ResponseEntity.ok(userResponseDto);

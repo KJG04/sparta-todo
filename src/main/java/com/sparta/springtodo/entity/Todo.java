@@ -19,6 +19,9 @@ public class Todo {
     Long id;
 
     @Column
+    String password;
+
+    @Column
     String content;
 
     @ManyToOne(optional = false)
@@ -31,6 +34,13 @@ public class Todo {
     @Column
     LocalDateTime updateAt;
 
+    @Builder
+    public Todo(String content, String password, User user) {
+        this.content = content;
+        this.password = password;
+        this.user = user;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createAt = LocalDateTime.now();
@@ -40,11 +50,5 @@ public class Todo {
     @PreUpdate
     public void preUpdate() {
         this.updateAt = LocalDateTime.now();
-    }
-
-    @Builder
-    public Todo(String content, User user) {
-        this.content = content;
-        this.user = user;
     }
 }
