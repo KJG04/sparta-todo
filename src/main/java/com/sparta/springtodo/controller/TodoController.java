@@ -73,6 +73,6 @@ public class TodoController {
     }
 
     @PutMapping("{todoId}")
-    public void updateTodo(@PathVariable String todoId) {
+    public void updateTodo(@PathVariable String todoId, @RequestHeader("password") String password, @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
     }
 }
