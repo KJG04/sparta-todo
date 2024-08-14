@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -64,7 +65,7 @@ public class TodoController {
     }
 
     @PostMapping("")
-    public ResponseEntity<TodoResponseDto> create(@RequestBody CreateTodoRequestDto createTodoRequestDto) {
+    public ResponseEntity<TodoResponseDto> create(@Validated @RequestBody CreateTodoRequestDto createTodoRequestDto) {
         Todo todo = this.todoService.createTodo(createTodoRequestDto.getContent(), createTodoRequestDto.getPassword(), createTodoRequestDto.getUserId());
         TodoResponseDto todoResponseDto = TodoMapper.INSTANCE.toTodoResponseDto(todo);
         return ResponseEntity.status(HttpStatus.CREATED).body(todoResponseDto);
@@ -84,7 +85,7 @@ public class TodoController {
     }
 
     @PutMapping("{todoId}")
-    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long todoId, @RequestHeader("password") String password, @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
+    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long todoId, @RequestHeader("password") String password, @Validated @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
         Todo todo = this.todoService.updateTodo(todoId, password, updateTodoRequestDto.getContent(), updateTodoRequestDto.getUserId());
         return ResponseEntity.ok(TodoMapper.INSTANCE.toTodoResponseDto(todo));
     }

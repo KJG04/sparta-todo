@@ -6,6 +6,7 @@ import com.sparta.springtodo.entity.User;
 import com.sparta.springtodo.mapper.UserMapper;
 import com.sparta.springtodo.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserResponseDto> create(@RequestBody CreateUserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> create(@Validated @RequestBody CreateUserRequestDto userRequestDto) {
         User user = userService.createUser(userRequestDto.getName(), userRequestDto.getEmail());
         UserResponseDto userResponseDto = UserMapper.INSTANCE.toUserResponseDto(user);
         return ResponseEntity.ok(userResponseDto);
