@@ -1,20 +1,25 @@
 package com.sparta.springtodo.controller;
 
 import com.sparta.springtodo.dto.CreateTodoRequestDto;
+import com.sparta.springtodo.dto.PageResponseDto;
 import com.sparta.springtodo.dto.TodoResponseDto;
+import com.sparta.springtodo.dto.UpdateTodoRequestDto;
 import com.sparta.springtodo.entity.Todo;
-import com.sparta.springtodo.exception.BadRequestException;
+import com.sparta.springtodo.mapper.PageTodoMapper;
 import com.sparta.springtodo.mapper.TodoMapper;
 import com.sparta.springtodo.service.TodoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,31 +32,35 @@ public class TodoController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<TodoResponseDto>> getTodos(@RequestParam(required = false) String updateAt, @RequestParam(required = false) Long userId) {
+    public ResponseEntity<PageResponseDto<TodoResponseDto>> getTodos(@RequestParam(required = false) String updateAt, @RequestParam(required = false) Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+        Integer iPage = Optional.ofNullable(page).orElse(0);
+        Integer iSize = Optional.ofNullable(size).orElse(20);
         Optional<String> optionalUpdateAt = Optional.ofNullable(updateAt);
         Optional<Long> optionalUserId = Optional.ofNullable(userId);
 
-        List<Todo> todos;
+        PageRequest pageRequest = PageRequest.of(iPage, iSize, Sort.Direction.DESC, "updateAt");
+
+        Page<Todo> todos;
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             if (optionalUpdateAt.isPresent() && optionalUserId.isPresent()) {
                 LocalDate localDate = LocalDate.parse(optionalUpdateAt.get(), dateTimeFormatter);
-                todos = this.todoService.getTodosByUpdateAtAndUserId(LocalDateTime.of(localDate, LocalDateTime.MIN.toLocalTime()), optionalUserId.get());
+                todos = this.todoService.getTodosByUpdateAtAndUserId(LocalDateTime.of(localDate, LocalDateTime.MIN.toLocalTime()), optionalUserId.get(), pageRequest);
             } else if (optionalUpdateAt.isPresent()) {
                 LocalDate localDate = LocalDate.parse(optionalUpdateAt.get(), dateTimeFormatter);
-                todos = this.todoService.getTodosByUpdateAt(LocalDateTime.of(localDate, LocalDateTime.MIN.toLocalTime()));
+                todos = this.todoService.getTodosByUpdateAt(LocalDateTime.of(localDate, LocalDateTime.MIN.toLocalTime()), pageRequest);
             } else if (optionalUserId.isPresent()) {
-                todos = this.todoService.getTodosByUserId(optionalUserId.get());
+                todos = this.todoService.getTodosByUserId(optionalUserId.get(), pageRequest);
             } else {
-                todos = this.todoService.getTodos();
+                todos = this.todoService.getTodos(pageRequest);
             }
         } catch (DateTimeParseException e) {
             // 날짜 parse에 실패하면 BadRequest 생성
-            throw new BadRequestException();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "updateAt이 잘못된 형식입니다.");
         }
-
-        List<TodoResponseDto> todoResponseDtos = todos.stream().map(TodoMapper.INSTANCE::toTodoResponseDto).toList();
-        return ResponseEntity.ok(todoResponseDtos);
+        Page<TodoResponseDto> todoResponseDtos = todos.map(TodoMapper.INSTANCE::toTodoResponseDto);
+        PageResponseDto<TodoResponseDto> pageResponseDto = PageTodoMapper.INSTANCE.toPageResponseDto(todoResponseDtos);
+        return ResponseEntity.ok(pageResponseDto);
     }
 
     @PostMapping("")
