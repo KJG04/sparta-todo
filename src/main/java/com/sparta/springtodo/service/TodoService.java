@@ -47,4 +47,9 @@ public class TodoService {
 
         return this.todoRepository.save(todo);
     }
+
+    public void deleteTodo(Long todoId, String password) {
+        Todo todo = Optional.ofNullable(this.todoRepository.findByIdAndPassword(todoId, password)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 할 일을 찾을 수 없습니다."));
+        this.todoRepository.delete(todo);
+    }
 }

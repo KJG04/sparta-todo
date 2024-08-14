@@ -69,7 +69,9 @@ public class TodoController {
     }
 
     @DeleteMapping("/{todoId}")
-    public void deleteTodoById(@RequestHeader("password") String password, @PathVariable String todoId) {
+    public ResponseEntity deleteTodoById(@PathVariable Long todoId, @RequestHeader("password") String password) {
+        this.todoService.deleteTodo(todoId, password);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{todoId}")
