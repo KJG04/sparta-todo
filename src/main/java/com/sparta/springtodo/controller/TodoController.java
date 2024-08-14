@@ -84,6 +84,8 @@ public class TodoController {
     }
 
     @PutMapping("{todoId}")
-    public void updateTodo(@PathVariable String todoId, @RequestHeader("password") String password, @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
+    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable Long todoId, @RequestHeader("password") String password, @RequestBody UpdateTodoRequestDto updateTodoRequestDto) {
+        Todo todo = this.todoService.updateTodo(todoId, password, updateTodoRequestDto.getContent(), updateTodoRequestDto.getUserId());
+        return ResponseEntity.ok(TodoMapper.INSTANCE.toTodoResponseDto(todo));
     }
 }

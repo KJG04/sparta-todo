@@ -51,7 +51,23 @@ public class TodoService {
     }
 
     public void deleteTodo(Long todoId, String password) {
-        Todo todo = Optional.ofNullable(this.todoRepository.findByIdAndPassword(todoId, password)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 할 일을 찾을 수 없습니다."));
+        Todo todo = this.todoRepository.findByIdAndPassword(todoId, password).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 할 일을 찾을 수 없습니다."));
         this.todoRepository.delete(todo);
+    }
+
+    public Todo updateTodo(Long todoId, String password, String content, Long _userId) {
+        Todo todo = this.todoRepository.findByIdAndPassword(todoId, password).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 할 일을 찾을 수 없습니다."));
+        User user = todo.getUser();
+        Optional<Long> optionalUserId = Optional.ofNullable(_userId);
+
+        if (optionalUserId.isPresent()) {
+            Long userId = optionalUserId.get();
+            user = this.userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당하는 유저를 찾을 수 없습니다."));
+        }
+
+        todo.setContent(Optional.ofNullable(content).orElse(todo.getContent()));
+        todo.setUser(user);
+
+        return this.todoRepository.save(todo);
     }
 }

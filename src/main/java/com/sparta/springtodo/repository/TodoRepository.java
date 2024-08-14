@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
@@ -15,5 +16,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     Page<Todo> findPageByUpdateAtBetweenAndUser_Id(LocalDateTime start, LocalDateTime end, Long user_id, Pageable pageable);
 
-    Todo findByIdAndPassword(Long id, String password);
+    Optional<Todo> findByIdAndPassword(Long id, String password);
 }
