@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateUserRequestDto {
-    @NotNull
-    @NotBlank
+    @NotNull(message = "name은 null이 아니여야 합니다.")
+    @NotBlank(message = "name은 빈 값이 아니여야 합니다.")
     private String name;
 
     @NotNull(message = "email은 null이 아니여야 합니다.")

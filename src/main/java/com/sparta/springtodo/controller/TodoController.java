@@ -32,7 +32,7 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<PageResponseDto<TodoResponseDto>> getTodos(@RequestParam(required = false) String updateAt, @RequestParam(required = false) Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
         Integer iPage = Optional.ofNullable(page).orElse(0);
         Integer iSize = Optional.ofNullable(size).orElse(20);
@@ -64,7 +64,7 @@ public class TodoController {
         return ResponseEntity.ok(pageResponseDto);
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<TodoResponseDto> create(@Validated @RequestBody CreateTodoRequestDto createTodoRequestDto) {
         Todo todo = this.todoService.createTodo(createTodoRequestDto.getContent(), createTodoRequestDto.getPassword(), createTodoRequestDto.getUserId());
         TodoResponseDto todoResponseDto = TodoMapper.INSTANCE.toTodoResponseDto(todo);
