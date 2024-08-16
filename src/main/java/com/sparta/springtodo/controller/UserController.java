@@ -5,6 +5,7 @@ import com.sparta.springtodo.dto.UserResponseDto;
 import com.sparta.springtodo.entity.User;
 import com.sparta.springtodo.mapper.UserMapper;
 import com.sparta.springtodo.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> create(@Validated @RequestBody CreateUserRequestDto userRequestDto) {
         User user = userService.createUser(userRequestDto.getName(), userRequestDto.getEmail());
         UserResponseDto userResponseDto = UserMapper.INSTANCE.toUserResponseDto(user);
-        return ResponseEntity.ok(userResponseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
     }
 
     @GetMapping("")
