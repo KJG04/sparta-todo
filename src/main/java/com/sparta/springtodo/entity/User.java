@@ -18,16 +18,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
+    @Column(nullable = false)
     String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     String email;
 
-    @Column
+    @Column(nullable = false)
     LocalDateTime createAt;
 
-    @Column
+    @Column(nullable = false)
     LocalDateTime updateAt;
 
     @Builder

@@ -18,20 +18,20 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
+    @Column(nullable = false)
     String password;
 
-    @Column
+    @Column(nullable = false, length = 200)
     String content;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "USER_ID")
     User user;
 
-    @Column
+    @Column(nullable = false)
     LocalDateTime createAt;
 
-    @Column
+    @Column(nullable = false)
     LocalDateTime updateAt;
 
     @Builder
